@@ -56,7 +56,8 @@ final class SendPolicy
             throw new SendBlockedException('The contact is not in an approved SMS segment.');
         }
 
-        if ($this->todayDeliveredCount() >= $settings['daily_limit']) {
+        // Mautic creates the current message stat before invoking the transport.
+        if ($this->todayDeliveredCount() > $settings['daily_limit']) {
             throw new SendBlockedException('The configured SMS daily limit has been reached.');
         }
 
