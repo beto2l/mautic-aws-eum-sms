@@ -81,6 +81,7 @@ vendor/bin/phpunit
 Need help configuring your server and getting the most out of Mautic and AWS End User Messaging SMS, including secure SMS delivery to your authorized contact database?
 
 - Configuration consultation: **$200 USD**. Payment is required before scheduling.
+- Pay for a configuration consultation: [PayPal](https://www.paypal.com/ncp/payment/UYW7R5DVZ95AL)
 - Schedule a consultation: [Google Calendar](https://calendar.app.google/cVrPWqf1tWfrk1UB8)
 - Contact: [contact@opin-x.com](mailto:contact@opin-x.com)
 
