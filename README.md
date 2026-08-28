@@ -76,6 +76,16 @@ Run the test suite in an environment that includes Mautic 7 dependencies:
 vendor/bin/phpunit
 ```
 
+## Consulting and support
+
+Need help configuring your server and getting the most out of Mautic and AWS End User Messaging SMS, including secure SMS delivery to your authorized contact database?
+
+- Configuration consultation: **$200 USD**. Payment is required before scheduling.
+- Schedule a consultation: [Google Calendar](https://calendar.app.google/cVrPWqf1tWfrk1UB8)
+- Contact: [contact@opin-x.com](mailto:contact@opin-x.com)
+
+For donations or configuration services, contact us by email.
+
 ## License
 
 GPL-3.0-or-later.
