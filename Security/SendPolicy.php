@@ -61,11 +61,52 @@ final class SendPolicy
             throw new SendBlockedException('The configured SMS daily limit has been reached.');
         }
 
-        // Mautic sends contacts sequentially in the campaign worker. Waiting here keeps
-        // the approved audience in the campaign instead of marking excess contacts failed.
-        $this->waitForRateLimit((int) $settings['per_minute_limit']);
-
         return $phone;
+    }
+
+    public function acquireRateLimit(int $limit): void
+    {
+        if ($limit < 1) {
+            throw new SendBlockedException('The configured SMS per-minute limit must be positive.');
+        }
+
+        do {
+            $acquired = $this->connection->fetchOne(
+                'SELECT GET_LOCK(:lock_name, 1)',
+                ['lock_name' => 'mautic-aws-eum-sms-rate'],
+            );
+
+            if (1 !== (int) $acquired) {
+                sleep(1);
+            }
+        } while (1 !== (int) $acquired);
+
+        // Hold the database advisory lock through the actual AWS request. This keeps
+        // concurrent Mautic workers at the configured rate even before stats are flushed.
+        usleep((int) ceil(60000000 / $limit));
+
+        while ($this->recentDeliveredCount() >= $limit) {
+            $oldest = $this->connection->fetchOne(
+                'SELECT MIN(date_sent) FROM sms_message_stats WHERE date_sent >= UTC_TIMESTAMP() - INTERVAL 60 SECOND AND is_failed = 0',
+            );
+
+            if (false === $oldest || null === $oldest) {
+                return;
+            }
+
+            $oldestTimestamp = strtotime((string) $oldest);
+            $waitSeconds     = false === $oldestTimestamp ? 1 : max(1, 61 - (time() - $oldestTimestamp));
+
+            sleep(min($waitSeconds, 60));
+        }
+    }
+
+    public function releaseRateLimit(): void
+    {
+        $this->connection->fetchOne(
+            'SELECT RELEASE_LOCK(:lock_name)',
+            ['lock_name' => 'mautic-aws-eum-sms-rate'],
+        );
     }
 
     private function hasConsent(Lead $lead, string $field): bool
@@ -101,24 +142,6 @@ final class SendPolicy
         return (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM sms_message_stats WHERE date_sent >= UTC_TIMESTAMP() - INTERVAL 60 SECOND AND is_failed = 0',
         );
-    }
-
-    private function waitForRateLimit(int $limit): void
-    {
-        while ($this->recentDeliveredCount() >= $limit) {
-            $oldest = $this->connection->fetchOne(
-                'SELECT MIN(date_sent) FROM sms_message_stats WHERE date_sent >= UTC_TIMESTAMP() - INTERVAL 60 SECOND AND is_failed = 0',
-            );
-
-            if (false === $oldest || null === $oldest) {
-                return;
-            }
-
-            $oldestTimestamp = strtotime((string) $oldest);
-            $waitSeconds     = false === $oldestTimestamp ? 1 : max(1, 61 - (time() - $oldestTimestamp));
-
-            sleep(min($waitSeconds, 60));
-        }
     }
 
     private function isE164(string $number): bool

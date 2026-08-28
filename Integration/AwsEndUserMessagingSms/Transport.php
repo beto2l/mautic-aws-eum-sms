@@ -26,9 +26,13 @@ final class Transport implements TransportInterface
      */
     public function sendSms(Lead $lead, $content, mixed $stat = null)
     {
+        $rateLimitAcquired = false;
+
         try {
             $settings = $this->configuration->get();
             $phone    = $this->sendPolicy->assertCanSend($lead, (string) $content, $settings);
+            $this->sendPolicy->acquireRateLimit((int) $settings['per_minute_limit']);
+            $rateLimitAcquired = true;
 
             $payload = [
                 'DestinationPhoneNumber' => $phone,
@@ -60,6 +64,10 @@ final class Transport implements TransportInterface
             ]);
 
             return 'AWS End User Messaging rejected the SMS request.';
+        } finally {
+            if ($rateLimitAcquired) {
+                $this->sendPolicy->releaseRateLimit();
+            }
         }
     }
 
