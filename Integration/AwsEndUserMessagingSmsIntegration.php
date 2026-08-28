@@ -102,6 +102,11 @@ final class AwsEndUserMessagingSmsIntegration extends AbstractIntegration
                 'data'        => $featureSettings['require_consent'] ?? true,
                 'required'    => false,
             ])
+            ->add('audience_consent_confirmed', CheckboxType::class, [
+                'label'       => 'I confirm that the approved audience has opted in to SMS',
+                'data'        => $featureSettings['audience_consent_confirmed'] ?? false,
+                'required'    => false,
+            ])
             ->add('consent_field', TextType::class, [
                 'label'       => 'SMS consent field alias',
                 'data'        => $featureSettings['consent_field'] ?? 'course_sms_optin',
@@ -119,6 +124,12 @@ final class AwsEndUserMessagingSmsIntegration extends AbstractIntegration
                 'data'        => $featureSettings['daily_limit'] ?? 25,
                 'required'    => true,
                 'attr'        => ['min' => 1, 'max' => 100000],
+            ])
+            ->add('per_minute_limit', IntegerType::class, [
+                'label'       => 'Maximum SMS deliveries per minute',
+                'data'        => $featureSettings['per_minute_limit'] ?? 10,
+                'required'    => true,
+                'attr'        => ['min' => 1, 'max' => 1000],
             ])
             ->add('max_message_characters', IntegerType::class, [
                 'label'       => 'Maximum message characters',

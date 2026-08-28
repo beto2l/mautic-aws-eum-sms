@@ -48,7 +48,7 @@ final class SendPolicy
             return $phone;
         }
 
-        if ($settings['require_consent'] && !$this->hasConsent($lead, (string) $settings['consent_field'])) {
+        if ($settings['require_consent'] && !$settings['audience_consent_confirmed'] && !$this->hasConsent($lead, (string) $settings['consent_field'])) {
             throw new SendBlockedException('The contact does not have the required SMS consent.');
         }
 
@@ -59,6 +59,10 @@ final class SendPolicy
         // Mautic creates the current message stat before invoking the transport.
         if ($this->todayDeliveredCount() > $settings['daily_limit']) {
             throw new SendBlockedException('The configured SMS daily limit has been reached.');
+        }
+
+        if ($this->recentDeliveredCount() >= $settings['per_minute_limit']) {
+            throw new SendBlockedException('The configured SMS per-minute limit has been reached.');
         }
 
         return $phone;
@@ -89,6 +93,13 @@ final class SendPolicy
     {
         return (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM sms_message_stats WHERE date_sent >= CURRENT_DATE() AND is_failed = 0',
+        );
+    }
+
+    private function recentDeliveredCount(): int
+    {
+        return (int) $this->connection->fetchOne(
+            'SELECT COUNT(*) FROM sms_message_stats WHERE date_sent >= UTC_TIMESTAMP() - INTERVAL 60 SECOND AND is_failed = 0',
         );
     }
 

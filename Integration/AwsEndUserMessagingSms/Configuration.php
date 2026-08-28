@@ -44,7 +44,9 @@ final class Configuration
         $settings['daily_limit']          = max(1, min(100000, (int) $settings['daily_limit']));
         $settings['max_message_characters'] = max(1, min(1600, (int) $settings['max_message_characters']));
         $settings['require_consent']      = $this->toBool($settings['require_consent']);
+        $settings['audience_consent_confirmed'] = $this->toBool($settings['audience_consent_confirmed']);
         $settings['reject_emoji']         = $this->toBool($settings['reject_emoji']);
+        $settings['per_minute_limit']     = max(1, min(1000, (int) $settings['per_minute_limit']));
 
         if (!preg_match('/^[a-z]{2}(?:-gov)?-[a-z]+-\d$/', $settings['region'])) {
             throw new \RuntimeException('AWS region is invalid.');
@@ -70,6 +72,10 @@ final class Configuration
             throw new \RuntimeException('Production mode requires at least one approved segment ID.');
         }
 
+        if ('production' === $settings['delivery_mode'] && !$settings['audience_consent_confirmed']) {
+            throw new \RuntimeException('Production mode requires administrator confirmation that the approved audience opted in to SMS.');
+        }
+
         if ('' === $settings['phone_field']) {
             throw new \RuntimeException('A normalized phone field alias is required.');
         }
@@ -93,9 +99,11 @@ final class Configuration
             'test_phone_number'      => '',
             'phone_field'            => 'phone',
             'require_consent'        => true,
+            'audience_consent_confirmed' => false,
             'consent_field'          => 'course_sms_optin',
             'allowed_segment_ids'    => '',
             'daily_limit'            => 25,
+            'per_minute_limit'       => 10,
             'max_message_characters' => 480,
             'reject_emoji'           => true,
         ];
