@@ -57,13 +57,13 @@ final class SendPolicy
         }
 
         // Mautic creates the current message stat before invoking the transport.
-        if ($this->todayDeliveredCount() > $settings['daily_limit']) {
+        if ($this->todayDeliveredCount() >= $settings['daily_limit']) {
             throw new SendBlockedException('The configured SMS daily limit has been reached.');
         }
 
-        if ($this->recentDeliveredCount() >= $settings['per_minute_limit']) {
-            throw new SendBlockedException('The configured SMS per-minute limit has been reached.');
-        }
+        // Mautic sends contacts sequentially in the campaign worker. Waiting here keeps
+        // the approved audience in the campaign instead of marking excess contacts failed.
+        $this->waitForRateLimit((int) $settings['per_minute_limit']);
 
         return $phone;
     }
@@ -101,6 +101,24 @@ final class SendPolicy
         return (int) $this->connection->fetchOne(
             'SELECT COUNT(*) FROM sms_message_stats WHERE date_sent >= UTC_TIMESTAMP() - INTERVAL 60 SECOND AND is_failed = 0',
         );
+    }
+
+    private function waitForRateLimit(int $limit): void
+    {
+        while ($this->recentDeliveredCount() >= $limit) {
+            $oldest = $this->connection->fetchOne(
+                'SELECT MIN(date_sent) FROM sms_message_stats WHERE date_sent >= UTC_TIMESTAMP() - INTERVAL 60 SECOND AND is_failed = 0',
+            );
+
+            if (false === $oldest || null === $oldest) {
+                return;
+            }
+
+            $oldestTimestamp = strtotime((string) $oldest);
+            $waitSeconds     = false === $oldestTimestamp ? 1 : max(1, 61 - (time() - $oldestTimestamp));
+
+            sleep(min($waitSeconds, 60));
+        }
     }
 
     private function isE164(string $number): bool
