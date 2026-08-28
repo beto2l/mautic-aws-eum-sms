@@ -53,7 +53,7 @@ Configure the following fields:
 4. Enter the configuration set name or ARN.
 5. Keep delivery in a non-production mode until the canary test succeeds.
 
-The values shown in the screenshot are examples only. A phone number or ARN from another AWS account will not work.
+The origination identity field is intentionally blank in the public screenshot. Enter your own phone number, pool, or ARN locally; a phone number or ARN from another AWS account will not work.
 
 ## 4. Configure SMS safety controls
 
