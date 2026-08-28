@@ -13,6 +13,7 @@ The plugin adds a native Mautic SMS transport and exposes the normal SMS area un
 - Mautic continues to enforce its existing SMS Do Not Contact / opt-out records before this transport is called.
 - The plugin rejects emoji by default and limits message length to control multi-part SMS cost.
 - AWS credentials are never entered in the Mautic modal and are never committed to this repository.
+- Do not enable the Twilio SMS plugin at the same time. Mautic uses one active SMS transport for campaign delivery.
 
 ## Requirements
 
@@ -40,6 +41,8 @@ plugins/AwsEndUserMessagingSmsBundle/
 Then run:
 
 ```bash
+php bin/console cache:clear --no-warmup
+php bin/console cache:warmup
 php bin/console mautic:plugins:reload
 ```
 
