@@ -1,0 +1,30 @@
+{
+  "name": "beto2l/mautic-aws-eum-sms",
+  "description": "Secure AWS End User Messaging SMS transport for Mautic.",
+  "type": "mautic-plugin",
+  "license": "GPL-3.0-or-later",
+  "require": {
+    "php": "^8.2",
+    "aws/aws-sdk-php": "^3.0",
+    "mautic/composer-plugin": "^1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "MauticPlugin\\AwsEndUserMessagingSmsBundle\\": ""
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "MauticPlugin\\AwsEndUserMessagingSmsBundle\\Tests\\": "Tests/"
+    }
+  },
+  "extra": {
+    "install-directory-name": "AwsEndUserMessagingSmsBundle"
+  },
+  "scripts": {
+    "lint": "find . -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l"
+  }
+}
