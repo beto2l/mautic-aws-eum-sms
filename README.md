@@ -9,7 +9,7 @@ The plugin adds a native Mautic SMS transport and exposes the normal SMS area un
 - Disabled by default. The integration must be enabled in **Settings > Plugins**.
 - Delivery starts in `locked` mode. No text is sent until an administrator deliberately selects `canary` or `production`.
 - Canary mode can send only to one configured E.164 test number.
-- Production mode requires a normalized E.164 phone field, administrator confirmation that the approved audience opted in to SMS, and membership in one of the configured segment IDs. Mautic's native DNC/opt-out checks remain active.
+- Production mode requires a phone field that can be normalized to E.164, administrator confirmation that the approved audience opted in to SMS, and membership in one of the configured segment IDs. US 10- and 11-digit NANP values are normalized to E.164 at send time. Mautic's native DNC/opt-out checks remain active.
 - Mautic continues to enforce its existing SMS Do Not Contact / opt-out records before this transport is called.
 - The plugin rejects emoji by default and limits message length to control multi-part SMS cost.
 - AWS credentials are never entered in the Mautic modal and are never committed to this repository.

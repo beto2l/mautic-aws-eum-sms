@@ -19,7 +19,7 @@ final class SendPolicy
      */
     public function assertCanSend(Lead $lead, string $content, array $settings): string
     {
-        $phone = trim((string) $lead->getFieldValue((string) $settings['phone_field']));
+        $phone = $this->normalizePhone((string) $lead->getFieldValue((string) $settings['phone_field']));
         if (!$this->isE164($phone)) {
             throw new SendBlockedException('The configured phone field is missing or is not normalized to E.164.');
         }
@@ -106,6 +106,21 @@ final class SendPolicy
     private function isE164(string $number): bool
     {
         return 1 === preg_match('/^\+[1-9][0-9]{7,14}$/', $number);
+    }
+
+    private function normalizePhone(string $number): string
+    {
+        $number = trim($number);
+
+        if (preg_match('/^[0-9]{10}$/', $number)) {
+            return '+1'.$number;
+        }
+
+        if (preg_match('/^1[0-9]{10}$/', $number)) {
+            return '+'.$number;
+        }
+
+        return $number;
     }
 
     private function containsEmoji(string $content): bool
