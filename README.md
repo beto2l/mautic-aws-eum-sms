@@ -17,19 +17,25 @@ The plugin adds a native Mautic SMS transport and exposes the normal SMS area un
 
 ## Requirements
 
-- Mautic 7.x and PHP 8.2 or newer.
+- Mautic 7.x and PHP 8.2 or 8.3.
 - AWS SDK for PHP.
 - An EC2 instance profile or other AWS default credential provider with `sms-voice:SendTextMessage` permission limited to the approved origination identity, pool, configuration set, or protect configuration.
 - An approved AWS End User Messaging SMS origination identity and configuration set.
 
 ## Install
 
-For a production Mautic installation managed by Composer, add this GitHub repository as a VCS repository until the package is published to Packagist:
+For a production Mautic installation managed by Composer, install the published package:
+
+```bash
+composer require beto2l/mautic-aws-eum-sms:^1.0
+php bin/console mautic:plugins:reload
+```
+
+Until the Packagist listing is active, add the GitHub repository as a VCS repository and require the release tag:
 
 ```bash
 composer config repositories.mautic-aws-eum-sms vcs https://github.com/beto2l/mautic-aws-eum-sms.git
-composer require beto2l/mautic-aws-eum-sms:dev-main
-php bin/console mautic:plugins:reload
+composer require beto2l/mautic-aws-eum-sms:^1.0
 ```
 
 For a non-Composer Mautic deployment, copy this repository into:
@@ -63,7 +69,7 @@ See the [installation and operation guide](docs/INSTALLATION.md) for the complet
 
 ## Release scope
 
-Version 0.1 supports text SMS only. MMS, RCS, inbound replies, and delivery-event webhooks are intentionally out of scope until the SMS transport is verified in production.
+Version 1.0 supports text SMS only. MMS, RCS, inbound replies, and delivery-event webhooks are intentionally out of scope until the SMS transport is verified in production.
 
 ## Development
 
