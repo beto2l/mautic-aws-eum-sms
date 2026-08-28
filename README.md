@@ -48,6 +48,8 @@ php bin/console mautic:plugins:reload
 
 Open **Settings > Plugins > AWS End User Messaging SMS** and configure the integration modal. Keep the delivery mode in `locked` until a canary test succeeds.
 
+See the [installation and operation guide](docs/INSTALLATION.md) for the complete setup and sending workflow.
+
 ## Configuration data
 
 - AWS region.
@@ -84,6 +86,7 @@ Need help configuring your server and getting the most out of Mautic and AWS End
 - Pay for a configuration consultation: [PayPal](https://www.paypal.com/ncp/payment/UYW7R5DVZ95AL)
 - Schedule a consultation: [Google Calendar](https://calendar.app.google/cVrPWqf1tWfrk1UB8)
 - Contact: [contact@opin-x.com](mailto:contact@opin-x.com)
+- Report an error: [Support and error reporting](SUPPORT.md)
 
 For donations or configuration services, contact us by email.
 
