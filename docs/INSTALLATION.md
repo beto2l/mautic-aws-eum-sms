@@ -8,7 +8,7 @@ The screenshots use example values. Replace them with the values from your own A
 
 Before installing the plugin, prepare:
 
-- Mautic 7.x with PHP 8.2 or newer.
+- Mautic 7.x with PHP 8.2 or 8.3.
 - The AWS SDK for PHP available through the Mautic Composer installation.
 - An AWS End User Messaging SMS origination identity approved for your country and message type.
 - An AWS configuration set, for example `example-sms-config`.
@@ -25,10 +25,17 @@ For a Composer-managed Mautic installation:
 
 ```bash
 composer config repositories.mautic-aws-eum-sms vcs https://github.com/beto2l/mautic-aws-eum-sms.git
-composer require beto2l/mautic-aws-eum-sms:dev-main
+composer require beto2l/mautic-aws-eum-sms:^1.0
 php bin/console mautic:plugins:reload
 php bin/console cache:clear --no-warmup
 php bin/console cache:warmup
+```
+
+Once the package is available on Packagist, the repository configuration is not needed:
+
+```bash
+composer require beto2l/mautic-aws-eum-sms:^1.0
+php bin/console mautic:plugins:reload
 ```
 
 For a non-Composer installation, copy the repository to:
