@@ -4,8 +4,8 @@ All notable changes to this project are documented here.
 
 ## [1.0.2] - 2026-09-03
 
-- Fixed Mautic 7.2 service wiring by referencing the core `EncryptionHelper` service directly.
-- Removed the need to redefine Mautic's encryption service in the plugin configuration.
+- Fixed Mautic 7.2 service wiring by aliasing the core `EncryptionHelper` service through a scalar plugin service ID.
+- Preserved the core encryption service dependencies during container dumping.
 
 ## [1.0.1] - 2026-08-28
 

@@ -7,7 +7,6 @@ use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms\Transport;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSmsIntegration;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Security\SendPolicy;
-use Symfony\Component\DependencyInjection\Reference;
 
 return [
     'name'        => 'AWS End User Messaging SMS',
@@ -27,7 +26,7 @@ return [
                     'router',
                     'translator',
                     'monolog.logger.mautic',
-                    new Reference(EncryptionHelper::class),
+                    'mautic.aws_eum_sms.encryption',
                     'mautic.lead.model.lead',
                     'mautic.lead.model.company',
                     'mautic.helper.paths',
@@ -40,6 +39,11 @@ return [
             ],
         ],
         'other' => [
+            // ServicePass adds this scalar alias without replacing the core definition.
+            EncryptionHelper::class => [
+                'class'         => EncryptionHelper::class,
+                'serviceAliases' => ['mautic.aws_eum_sms.encryption'],
+            ],
             'mautic.aws_eum_sms.configuration' => [
                 'class'     => Configuration::class,
                 'arguments' => ['mautic.helper.integration'],
