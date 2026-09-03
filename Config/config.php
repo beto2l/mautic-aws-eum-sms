@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
+use Mautic\CoreBundle\Helper\EncryptionHelper;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms\Configuration;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms\Transport;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSmsIntegration;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Security\SendPolicy;
+use Symfony\Component\DependencyInjection\Reference;
 
 return [
     'name'        => 'AWS End User Messaging SMS',
     'description' => 'Secure, consent-aware SMS delivery through AWS End User Messaging.',
-    'version'     => '1.0.1',
+    'version'     => '1.0.2',
     'author'      => 'OPIN X LLC',
 
     'services' => [
@@ -25,7 +27,7 @@ return [
                     'router',
                     'translator',
                     'monolog.logger.mautic',
-                    'mautic.helper.encryption',
+                    new Reference(EncryptionHelper::class),
                     'mautic.lead.model.lead',
                     'mautic.lead.model.company',
                     'mautic.helper.paths',

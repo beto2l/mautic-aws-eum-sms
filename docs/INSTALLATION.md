@@ -19,6 +19,8 @@ Before installing the plugin, prepare:
 
 The plugin uses the AWS role attached to the Mautic server. Do not paste AWS access keys into Mautic or commit them to this repository.
 
+For Mautic 7.2, the plugin uses Mautic's core `EncryptionHelper` service and leaves its `core_parameters` and OpenSSL cipher dependencies unchanged. Do not add a `mautic.helper.encryption` service override to the plugin configuration.
+
 ## 2. Install the plugin
 
 For a Composer-managed Mautic installation:

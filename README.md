@@ -15,6 +15,8 @@ The plugin adds a native Mautic SMS transport and exposes the normal SMS area un
 - AWS credentials are never entered in the Mautic modal and are never committed to this repository.
 - Do not enable the Twilio SMS plugin at the same time. Mautic uses one active SMS transport for campaign delivery.
 
+Mautic 7.2 provides `Mautic\CoreBundle\Helper\EncryptionHelper` as a core service. The plugin references that service directly and does not redefine `mautic.helper.encryption`, so Mautic's core cipher dependencies remain intact.
+
 ## Requirements
 
 - Mautic 7.x and PHP 8.2 or 8.3.
