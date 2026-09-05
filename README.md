@@ -71,7 +71,7 @@ See the [installation and operation guide](docs/INSTALLATION.md) for the complet
 
 ## Release scope
 
-Version 1.0 supports text SMS only. MMS, RCS, inbound replies, and delivery-event webhooks are intentionally out of scope until the SMS transport is verified in production.
+The current 1.x release supports text SMS only. MMS, RCS, inbound replies, and delivery-event webhooks are intentionally out of scope until the SMS transport is verified in production.
 
 ## Development
 

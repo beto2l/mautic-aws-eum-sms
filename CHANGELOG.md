@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [1.0.3] - 2026-09-05
+
+- Updated the Mautic integration description to use a generic account-linked email instruction instead of a project-specific address.
+- Updated the installation screenshot to show version 1.0.3 without account-specific information.
+
 ## [1.0.2] - 2026-09-03
 
 - Fixed Mautic 7.2 service wiring by aliasing the core `EncryptionHelper` service through a scalar plugin service ID.

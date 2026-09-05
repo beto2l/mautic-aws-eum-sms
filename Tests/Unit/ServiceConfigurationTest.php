@@ -14,6 +14,15 @@ use Symfony\Component\DependencyInjection\Reference;
 
 final class ServiceConfigurationTest extends TestCase
 {
+    public function testIntegrationDescriptionUsesAccountNeutralSupportText(): void
+    {
+        $source = file_get_contents(dirname(__DIR__, 2).'/Integration/AwsEndUserMessagingSmsIntegration.php');
+
+        self::assertIsString($source);
+        self::assertStringContainsString('email address linked to your account', $source);
+        self::assertStringNotContainsString('contact@opin-x.com', $source);
+    }
+
     public function testEncryptionHelperCompilesThroughMauticServicePass(): void
     {
         /** @var array<string, mixed> $config */

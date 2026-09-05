@@ -28,7 +28,7 @@ final class AwsEndUserMessagingSmsIntegration extends AbstractIntegration
 
     public function getDescription(): string
     {
-        return 'Uses the IAM role attached to the Mautic server. AWS access keys are never stored in Mautic. For support or error reports, email <a href="mailto:contact@opin-x.com?subject=AWS%20SMS%20plugin%20support">contact@opin-x.com</a>. Include your Mautic and plugin versions, reproduction steps, and sanitized logs. Never send credentials or contact data.';
+        return 'Uses the IAM role attached to the Mautic server. AWS access keys are never stored in Mautic. For support or error reports, use the email address linked to your account. Include your Mautic and plugin versions, reproduction steps, and sanitized logs. Never send credentials or contact data.';
     }
 
     public function getAuthenticationType(): string
