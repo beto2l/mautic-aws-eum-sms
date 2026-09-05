@@ -19,7 +19,7 @@ Mautic 7.2 provides `Mautic\CoreBundle\Helper\EncryptionHelper` as a core servic
 
 ## Requirements
 
-- Mautic 7.x and PHP 8.2 or 8.3.
+- Mautic 7.x (verified with Mautic 7.2.0) and PHP 8.2, 8.3, or 8.4.
 - AWS SDK for PHP.
 - An EC2 instance profile or other AWS default credential provider with `sms-voice:SendTextMessage` permission limited to the approved origination identity, pool, configuration set, or protect configuration.
 - An approved AWS End User Messaging SMS origination identity and configuration set.

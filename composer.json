@@ -10,7 +10,7 @@
     "source": "https://github.com/beto2l/mautic-aws-eum-sms"
   },
   "require": {
-    "php": ">=8.2 <8.4",
+    "php": ">=8.2 <8.5",
     "aws/aws-sdk-php": "^3.0",
     "mautic/core-lib": "^7.0"
   },

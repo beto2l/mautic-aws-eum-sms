@@ -8,7 +8,7 @@ The screenshots use example values. Replace them with the values from your own A
 
 Before installing the plugin, prepare:
 
-- Mautic 7.x with PHP 8.2 or 8.3.
+- Mautic 7.x (verified with Mautic 7.2.0) with PHP 8.2, 8.3, or 8.4.
 - The AWS SDK for PHP available through the Mautic Composer installation.
 - An AWS End User Messaging SMS origination identity approved for your country and message type.
 - An AWS configuration set, for example `example-sms-config`.

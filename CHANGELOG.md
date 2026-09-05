@@ -6,6 +6,8 @@ All notable changes to this project are documented here.
 
 - Fixed Mautic 7.2 service wiring by aliasing the core `EncryptionHelper` service through a scalar plugin service ID.
 - Preserved the core encryption service dependencies during container dumping.
+- Verified the plugin on the production Mautic 7.2.0 installation running PHP 8.4.
+- Added PHP 8.4 to the continuous integration matrix.
 
 ## [1.0.1] - 2026-08-28
 
