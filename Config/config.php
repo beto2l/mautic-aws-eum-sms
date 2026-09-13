@@ -3,15 +3,17 @@
 declare(strict_types=1);
 
 use Mautic\CoreBundle\Helper\EncryptionHelper;
+use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms\AwsGateway;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms\Configuration;
+use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms\MediaPreparer;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms\Transport;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSmsIntegration;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Security\SendPolicy;
 
 return [
-    'name'        => 'AWS End User Messaging SMS',
-    'description' => 'Secure, consent-aware SMS delivery through AWS End User Messaging.',
-    'version'     => '1.0.3',
+    'name'        => 'AWS End User Messaging SMS/MMS',
+    'description' => 'Secure, consent-aware SMS and MMS delivery through AWS End User Messaging.',
+    'version'     => '1.1.0',
     'author'      => 'OPIN X LLC',
 
     'services' => [
@@ -52,11 +54,23 @@ return [
                 'class'     => SendPolicy::class,
                 'arguments' => ['doctrine.dbal.default_connection'],
             ],
+            'mautic.aws_eum_sms.aws_gateway' => [
+                'class' => AwsGateway::class,
+            ],
+            'mautic.aws_eum_sms.media_preparer' => [
+                'class'     => MediaPreparer::class,
+                'arguments' => [
+                    'mautic.helper.paths',
+                    'mautic.aws_eum_sms.aws_gateway',
+                ],
+            ],
             'mautic.aws_eum_sms.transport' => [
                 'class'     => Transport::class,
                 'arguments' => [
                     'mautic.aws_eum_sms.configuration',
                     'mautic.aws_eum_sms.send_policy',
+                    'mautic.aws_eum_sms.media_preparer',
+                    'mautic.aws_eum_sms.aws_gateway',
                     'monolog.logger.mautic',
                 ],
                 'tag'          => 'mautic.sms_transport',

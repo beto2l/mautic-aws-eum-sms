@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here.
 
+## [1.1.0] - 2026-09-13
+
+- Added outbound MMS support through Mautic 7.2's native `MMSTransportInterface` and AWS `SendMediaMessage`.
+- Added fail-closed MMS controls for campaign approval, MMS-capable identity confirmation, and AWS-managed opt-outs.
+- Added safe local-image validation and content-addressed S3 preparation for one JPEG, PNG, or GIF up to 2 MB.
+- Preserved the existing SMS transport and safety controls.
+- Removed contact identifiers from transport logs and added non-PII AWS message-ID correlation guidance.
+- Added MMS activation, monitoring, incident-response, and rollback documentation and regression tests.
+
 ## [1.0.3] - 2026-09-05
 
 - Updated the Mautic integration description to use a generic account-linked email instruction instead of a project-specific address.

@@ -57,6 +57,65 @@ final class SendPolicyTest extends TestCase
         $this->policy()->assertCanSend($lead, 'Test message 👍', $settings);
     }
 
+    public function testMmsDisabledConfigurationIsBlocked(): void
+    {
+        $this->expectException(SendBlockedException::class);
+        $this->expectExceptionMessage('MMS is disabled');
+
+        $this->policy()->assertCanSendMms(
+            $this->leadWithPhone('2125550123'),
+            'MMS message',
+            $this->settings(),
+        );
+    }
+
+    public function testMmsIneligibleIdentityIsBlocked(): void
+    {
+        $settings = $this->settings([
+            'mms_enabled'                    => true,
+            'mms_campaign_approved'          => true,
+            'mms_identity_capable'           => false,
+            'aws_managed_opt_outs_confirmed' => true,
+        ]);
+
+        $this->expectException(SendBlockedException::class);
+        $this->expectExceptionMessage('MMS-capable');
+
+        $this->policy()->assertCanSendMms($this->leadWithPhone('2125550123'), 'MMS message', $settings);
+    }
+
+    public function testMmsWithoutAwsManagedOptOutsIsBlocked(): void
+    {
+        $settings = $this->settings([
+            'mms_enabled'                    => true,
+            'mms_campaign_approved'          => true,
+            'mms_identity_capable'           => true,
+            'aws_managed_opt_outs_confirmed' => false,
+        ]);
+
+        $this->expectException(SendBlockedException::class);
+        $this->expectExceptionMessage('opt-outs');
+
+        $this->policy()->assertCanSendMms($this->leadWithPhone('2125550123'), 'MMS message', $settings);
+    }
+
+    public function testMmsCanaryPassesWhenEverySafetyGateIsConfirmed(): void
+    {
+        $settings = $this->settings([
+            'delivery_mode'                  => 'canary',
+            'test_phone_number'              => '+12125550123',
+            'mms_enabled'                    => true,
+            'mms_campaign_approved'          => true,
+            'mms_identity_capable'           => true,
+            'aws_managed_opt_outs_confirmed' => true,
+        ]);
+
+        self::assertSame(
+            '+12125550123',
+            $this->policy()->assertCanSendMms($this->leadWithPhone('2125550123'), 'MMS message', $settings),
+        );
+    }
+
     /** @param array<string, mixed> $overrides */
     private function settings(array $overrides = []): array
     {
@@ -71,6 +130,10 @@ final class SendPolicyTest extends TestCase
             'consent_field'              => 'sms_opt_in',
             'allowed_segment_ids'        => [37],
             'daily_limit'                => 10000,
+            'mms_enabled'                => false,
+            'mms_campaign_approved'      => false,
+            'mms_identity_capable'       => false,
+            'aws_managed_opt_outs_confirmed' => false,
         ], $overrides);
     }
 

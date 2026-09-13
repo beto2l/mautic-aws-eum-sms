@@ -1,6 +1,6 @@
-# AWS End User Messaging SMS for Mautic
+# AWS End User Messaging SMS/MMS for Mautic
 
-Secure, consent-aware SMS delivery for Mautic 7 through AWS End User Messaging SMS.
+Secure, consent-aware SMS and MMS delivery for Mautic 7 through AWS End User Messaging.
 
 The plugin adds a native Mautic SMS transport and exposes the normal SMS area under **Channels** when it is enabled. It does not create a public webhook or store AWS access keys. AWS authentication uses the IAM role attached to the Mautic host.
 
@@ -12,6 +12,9 @@ The plugin adds a native Mautic SMS transport and exposes the normal SMS area un
 - Production mode requires a phone field that can be normalized to E.164, administrator confirmation that the approved audience opted in to SMS, and membership in one of the configured segment IDs. US 10- and 11-digit NANP values are normalized to E.164 at send time. Mautic's native DNC/opt-out checks remain active.
 - Mautic continues to enforce its existing SMS Do Not Contact / opt-out records before this transport is called.
 - The plugin rejects emoji by default and limits message length to control multi-part SMS cost.
+- MMS is independently disabled by default. Enabling it requires explicit confirmation of AWS campaign approval, an active MMS-capable origination identity, and AWS-managed opt-outs.
+- Mautic's native MMS editor is supported. One local JPEG, PNG, or GIF image of at most 2 MB is copied to a private S3 bucket in the same AWS account and region, then submitted with `SendMediaMessage`.
+- External image downloads are intentionally rejected. This prevents the Mautic worker from fetching untrusted URLs.
 - AWS credentials are never entered in the Mautic modal and are never committed to this repository.
 - Do not enable the Twilio SMS plugin at the same time. Mautic uses one active SMS transport for campaign delivery.
 
@@ -19,10 +22,11 @@ Mautic 7.2 provides `Mautic\CoreBundle\Helper\EncryptionHelper` as a core servic
 
 ## Requirements
 
-- Mautic 7.x (verified with Mautic 7.2.0) and PHP 8.2, 8.3, or 8.4.
+- Mautic 7.2 or newer within the 7.x series (verified with Mautic 7.2.0) and PHP 8.2, 8.3, or 8.4.
 - AWS SDK for PHP.
 - An EC2 instance profile or other AWS default credential provider with `sms-voice:SendTextMessage` permission limited to the approved origination identity, pool, configuration set, or protect configuration.
 - An approved AWS End User Messaging SMS origination identity and configuration set.
+- For MMS: `sms-voice:SendMediaMessage`, a same-account/same-region S3 bucket, and narrowly scoped `s3:GetObject` and `s3:PutObject` permissions for the configured prefix.
 
 ## Install
 
@@ -56,7 +60,7 @@ php bin/console mautic:plugins:reload
 
 Open **Settings > Plugins > AWS End User Messaging SMS** and configure the integration modal. Keep the delivery mode in `locked` until a canary test succeeds.
 
-See the [installation and operation guide](docs/INSTALLATION.md) for the complete setup and sending workflow.
+See the [installation and operation guide](docs/INSTALLATION.md) for SMS setup and the [MMS activation and operations guide](docs/MMS.md) before enabling media delivery.
 
 ## Configuration data
 
@@ -64,14 +68,16 @@ See the [installation and operation guide](docs/INSTALLATION.md) for the complet
 - AWS origination identity: phone number, pool, or ARN.
 - AWS configuration set name or ARN.
 - Normalized phone field alias, usually `phone`.
-- SMS consent field alias, for example `course_sms_optin`.
+- SMS/MMS consent field alias, for example `course_sms_optin`.
 - Administrator confirmation that the approved audience has opted in to SMS.
 - Approved Mautic segment IDs.
 - Canary test number, daily limit, per-minute limit, maximum message length, and message type.
 
 ## Release scope
 
-The current 1.x release supports text SMS only. MMS, RCS, inbound replies, and delivery-event webhooks are intentionally out of scope until the SMS transport is verified in production.
+Version 1.1 adds outbound MMS through Mautic 7.2's native MMS structure and AWS `SendMediaMessage`. It supports one local JPEG, PNG, or GIF image per message. SMS behavior remains independent and unchanged. RCS, inbound-reply ingestion, self-managed opt-outs, remote-image fetching, PDFs/video/audio, and a local delivery-event webhook are out of scope.
+
+AWS acceptance is not handset delivery. Correlate the non-PII AWS message ID from Mautic logs with a configuration-set event destination for final delivery status.
 
 ## Development
 

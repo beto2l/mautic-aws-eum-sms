@@ -7,7 +7,7 @@ namespace MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessag
 use Mautic\PluginBundle\Helper\IntegrationHelper;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSmsIntegration;
 
-final class Configuration
+final class Configuration implements ConfigurationProviderInterface
 {
     /** @var array<string, mixed>|null */
     private ?array $settings = null;
@@ -47,6 +47,12 @@ final class Configuration
         $settings['audience_consent_confirmed'] = $this->toBool($settings['audience_consent_confirmed']);
         $settings['reject_emoji']         = $this->toBool($settings['reject_emoji']);
         $settings['per_minute_limit']     = max(1, min(1000, (int) $settings['per_minute_limit']));
+        $settings['mms_enabled']          = $this->toBool($settings['mms_enabled']);
+        $settings['mms_campaign_approved'] = $this->toBool($settings['mms_campaign_approved']);
+        $settings['mms_identity_capable'] = $this->toBool($settings['mms_identity_capable']);
+        $settings['aws_managed_opt_outs_confirmed'] = $this->toBool($settings['aws_managed_opt_outs_confirmed']);
+        $settings['mms_s3_bucket']        = trim((string) $settings['mms_s3_bucket']);
+        $settings['mms_s3_prefix']        = trim((string) $settings['mms_s3_prefix'], " /\t\n\r\0\x0B");
 
         if (!preg_match('/^[a-z]{2}(?:-gov)?-[a-z]+-\d$/', $settings['region'])) {
             throw new \RuntimeException('AWS region is invalid.');
@@ -73,7 +79,7 @@ final class Configuration
         }
 
         if ('production' === $settings['delivery_mode'] && !$settings['audience_consent_confirmed']) {
-            throw new \RuntimeException('Production mode requires administrator confirmation that the approved audience opted in to SMS.');
+            throw new \RuntimeException('Production mode requires administrator confirmation that the approved audience opted in to SMS/MMS.');
         }
 
         if ('' === $settings['phone_field']) {
@@ -106,6 +112,12 @@ final class Configuration
             'per_minute_limit'       => 10,
             'max_message_characters' => 480,
             'reject_emoji'           => true,
+            'mms_enabled'            => false,
+            'mms_campaign_approved'  => false,
+            'mms_identity_capable'   => false,
+            'aws_managed_opt_outs_confirmed' => false,
+            'mms_s3_bucket'          => '',
+            'mms_s3_prefix'          => 'mautic-mms',
         ];
     }
 

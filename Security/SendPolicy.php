@@ -8,7 +8,7 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Mautic\LeadBundle\Entity\Lead;
 
-final class SendPolicy
+final class SendPolicy implements SendPolicyInterface
 {
     public function __construct(private readonly Connection $connection)
     {
@@ -19,25 +19,59 @@ final class SendPolicy
      */
     public function assertCanSend(Lead $lead, string $content, array $settings): string
     {
-        $phone = $this->normalizePhone((string) $lead->getFieldValue((string) $settings['phone_field']));
+        return $this->assertCommon($lead, $content, $settings, false);
+    }
+
+    /**
+     * @param array<string, mixed> $settings
+     */
+    public function assertCanSendMms(Lead $lead, string $content, array $settings): string
+    {
+        if (empty($settings['mms_enabled'])) {
+            throw new SendBlockedException('AWS MMS is disabled in plugin settings.');
+        }
+
+        if (empty($settings['mms_campaign_approved'])) {
+            throw new SendBlockedException('AWS MMS campaign approval has not been confirmed.');
+        }
+
+        if (empty($settings['mms_identity_capable'])) {
+            throw new SendBlockedException('The AWS origination identity has not been confirmed as active and MMS-capable.');
+        }
+
+        if (empty($settings['aws_managed_opt_outs_confirmed'])) {
+            throw new SendBlockedException('AWS-managed SMS/MMS opt-outs must be confirmed before MMS delivery.');
+        }
+
+        return $this->assertCommon($lead, $content, $settings, true);
+    }
+
+    /**
+     * @param array<string, mixed> $settings
+     */
+    private function assertCommon(Lead $lead, string $content, array $settings, bool $isMms): string
+    {
+        $channel = $isMms ? 'MMS' : 'SMS';
+        $phone   = $this->normalizePhone((string) $lead->getFieldValue((string) $settings['phone_field']));
         if (!$this->isE164($phone)) {
             throw new SendBlockedException('The configured phone field is missing or is not normalized to E.164.');
         }
 
-        if ('' === trim($content)) {
+        if (!$isMms && '' === trim($content)) {
             throw new SendBlockedException('SMS content cannot be empty.');
         }
 
-        if (mb_strlen($content) > $settings['max_message_characters']) {
-            throw new SendBlockedException('SMS content exceeds the configured maximum length.');
+        $maxCharacters = $isMms ? 1600 : (int) $settings['max_message_characters'];
+        if (mb_strlen($content) > $maxCharacters) {
+            throw new SendBlockedException(sprintf('%s content exceeds the configured maximum length.', $channel));
         }
 
         if ($settings['reject_emoji'] && $this->containsEmoji($content)) {
-            throw new SendBlockedException('SMS content contains emoji, which is blocked by this integration.');
+            throw new SendBlockedException(sprintf('%s content contains emoji, which is blocked by this integration.', $channel));
         }
 
         if ('locked' === $settings['delivery_mode']) {
-            throw new SendBlockedException('AWS SMS delivery is locked in plugin settings.');
+            throw new SendBlockedException(sprintf('AWS %s delivery is locked in plugin settings.', $channel));
         }
 
         if ('canary' === $settings['delivery_mode']) {
@@ -49,16 +83,16 @@ final class SendPolicy
         }
 
         if ($settings['require_consent'] && !$settings['audience_consent_confirmed'] && !$this->hasConsent($lead, (string) $settings['consent_field'])) {
-            throw new SendBlockedException('The contact does not have the required SMS consent.');
+            throw new SendBlockedException('The contact does not have the required SMS/MMS consent.');
         }
 
         if (!$this->isInApprovedSegment($lead->getId(), $settings['allowed_segment_ids'])) {
-            throw new SendBlockedException('The contact is not in an approved SMS segment.');
+            throw new SendBlockedException('The contact is not in an approved SMS/MMS segment.');
         }
 
         // Mautic creates the current message stat before invoking the transport.
         if ($this->todayDeliveredCount() >= $settings['daily_limit']) {
-            throw new SendBlockedException('The configured SMS daily limit has been reached.');
+            throw new SendBlockedException('The configured SMS/MMS daily limit has been reached.');
         }
 
         return $phone;

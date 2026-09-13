@@ -23,12 +23,12 @@ final class AwsEndUserMessagingSmsIntegration extends AbstractIntegration
 
     public function getDisplayName(): string
     {
-        return 'AWS End User Messaging SMS';
+        return 'AWS End User Messaging SMS/MMS';
     }
 
     public function getDescription(): string
     {
-        return 'Uses the IAM role attached to the Mautic server. AWS access keys are never stored in Mautic. For support or error reports, use the email address linked to your account. Include your Mautic and plugin versions, reproduction steps, and sanitized logs. Never send credentials or contact data.';
+        return 'Uses the IAM role attached to the Mautic server. AWS access keys are never stored in Mautic. SMS remains available independently; MMS stays blocked until AWS campaign approval, an MMS-capable identity, and AWS-managed opt-outs are confirmed. For support or error reports, use the email address linked to your account and sanitized logs.';
     }
 
     public function getAuthenticationType(): string
@@ -98,17 +98,17 @@ final class AwsEndUserMessagingSmsIntegration extends AbstractIntegration
                 'attr'        => ['placeholder' => 'phone'],
             ])
             ->add('require_consent', CheckboxType::class, [
-                'label'       => 'Require SMS consent before delivery',
+                'label'       => 'Require SMS/MMS consent before delivery',
                 'data'        => $featureSettings['require_consent'] ?? true,
                 'required'    => false,
             ])
             ->add('audience_consent_confirmed', CheckboxType::class, [
-                'label'       => 'I confirm that the approved audience has opted in to SMS',
+                'label'       => 'I confirm that the approved audience has opted in to SMS/MMS',
                 'data'        => $featureSettings['audience_consent_confirmed'] ?? false,
                 'required'    => false,
             ])
             ->add('consent_field', TextType::class, [
-                'label'       => 'SMS consent field alias',
+                'label'       => 'SMS/MMS consent field alias',
                 'data'        => $featureSettings['consent_field'] ?? 'course_sms_optin',
                 'required'    => false,
                 'attr'        => ['placeholder' => 'course_sms_optin'],
@@ -120,13 +120,13 @@ final class AwsEndUserMessagingSmsIntegration extends AbstractIntegration
                 'attr'        => ['placeholder' => '31,45'],
             ])
             ->add('daily_limit', IntegerType::class, [
-                'label'       => 'Maximum SMS deliveries per day',
+                'label'       => 'Maximum SMS/MMS deliveries per day',
                 'data'        => $featureSettings['daily_limit'] ?? 25,
                 'required'    => true,
                 'attr'        => ['min' => 1, 'max' => 100000],
             ])
             ->add('per_minute_limit', IntegerType::class, [
-                'label'       => 'Maximum SMS deliveries per minute',
+                'label'       => 'Maximum SMS/MMS deliveries per minute',
                 'data'        => $featureSettings['per_minute_limit'] ?? 10,
                 'required'    => true,
                 'attr'        => ['min' => 1, 'max' => 1000],
@@ -141,6 +141,38 @@ final class AwsEndUserMessagingSmsIntegration extends AbstractIntegration
                 'label'       => 'Block messages containing emoji',
                 'data'        => $featureSettings['reject_emoji'] ?? true,
                 'required'    => false,
+            ])
+            ->add('mms_enabled', CheckboxType::class, [
+                'label'    => 'Enable AWS MMS (keep off until every confirmation below is complete)',
+                'data'     => $featureSettings['mms_enabled'] ?? false,
+                'required' => false,
+            ])
+            ->add('mms_campaign_approved', CheckboxType::class, [
+                'label'    => 'I confirm AWS approved the SMS/MMS campaign or use case',
+                'data'     => $featureSettings['mms_campaign_approved'] ?? false,
+                'required' => false,
+            ])
+            ->add('mms_identity_capable', CheckboxType::class, [
+                'label'    => 'I confirm the origination identity is active, associated, and MMS-capable',
+                'data'     => $featureSettings['mms_identity_capable'] ?? false,
+                'required' => false,
+            ])
+            ->add('aws_managed_opt_outs_confirmed', CheckboxType::class, [
+                'label'    => 'I confirm AWS-managed opt-outs are enabled (self-managed opt-outs are not supported)',
+                'data'     => $featureSettings['aws_managed_opt_outs_confirmed'] ?? false,
+                'required' => false,
+            ])
+            ->add('mms_s3_bucket', TextType::class, [
+                'label'       => 'MMS media S3 bucket (same AWS account and region as the identity)',
+                'data'        => $featureSettings['mms_s3_bucket'] ?? '',
+                'required'    => false,
+                'attr'        => ['placeholder' => 'example-mautic-mms'],
+            ])
+            ->add('mms_s3_prefix', TextType::class, [
+                'label'       => 'MMS media S3 prefix',
+                'data'        => $featureSettings['mms_s3_prefix'] ?? 'mautic-mms',
+                'required'    => false,
+                'attr'        => ['placeholder' => 'mautic-mms'],
             ]);
     }
 }

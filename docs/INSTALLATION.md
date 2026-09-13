@@ -1,6 +1,6 @@
 # Installation and operation guide
 
-This guide covers installation, AWS prerequisites, Mautic configuration, canary testing, and sending a text SMS to an approved segment without n8n.
+This guide covers installation, AWS prerequisites, Mautic configuration, canary testing, and sending SMS to an approved segment without n8n. MMS has additional approval and media-storage requirements in the [MMS guide](MMS.md).
 
 The screenshots use example values. Replace them with the values from your own AWS account and Mautic instance. Do not publish screenshots containing account IDs, ARNs, phone numbers, contact records, access keys, or private URLs.
 
@@ -8,14 +8,14 @@ The screenshots use example values. Replace them with the values from your own A
 
 Before installing the plugin, prepare:
 
-- Mautic 7.x (verified with Mautic 7.2.0) with PHP 8.2, 8.3, or 8.4.
+- Mautic 7.2 or newer within the 7.x series (verified with Mautic 7.2.0) with PHP 8.2, 8.3, or 8.4.
 - The AWS SDK for PHP available through the Mautic Composer installation.
 - An AWS End User Messaging SMS origination identity approved for your country and message type.
 - An AWS configuration set, for example `example-sms-config`.
 - An EC2 instance profile or another AWS default credential provider attached to the Mautic host.
 - An IAM policy that grants `sms-voice:SendTextMessage` only to the approved SMS resources.
 - A Mautic phone field that contains values that can be normalized to E.164.
-- A Mautic consent field and an approved segment containing only contacts who opted in to SMS.
+- A Mautic consent field and an approved segment containing only contacts who opted in to SMS/MMS for the disclosed brand and use case.
 
 The plugin uses the AWS role attached to the Mautic server. Do not paste AWS access keys into Mautic or commit them to this repository.
 
@@ -76,9 +76,9 @@ Set these controls deliberately:
 - **Delivery mode**: use `Locked - do not send` during setup, then `Canary - test phone only`, and finally `Production - approved audiences`.
 - **Canary test phone number**: use one E.164 number that you control.
 - **Normalized phone field alias**: use the exact Mautic field alias containing the recipient phone number, such as `phone` or `whatsapp_number`.
-- **Require SMS consent before delivery**: keep this enabled for opted-in messaging.
-- **I confirm that the approved audience has opted in to SMS**: check this only after verifying the audience and consent records.
-- **SMS consent field alias**: enter the exact Mautic consent-field alias, such as `sms_opt_in`.
+- **Require SMS/MMS consent before delivery**: keep this enabled for opted-in messaging.
+- **I confirm that the approved audience has opted in to SMS/MMS**: check this only after verifying the audience and consent records.
+- **SMS/MMS consent field alias**: enter the exact Mautic consent-field alias, such as `sms_opt_in`.
 - **Approved segment IDs**: enter only the segment IDs authorized for SMS delivery.
 
 ![Features tab safety and pacing controls](images/plugin-features.jpg)
@@ -122,6 +122,10 @@ Use the SMS message view in Mautic to review the contacts recorded as sent and t
 
 For final handset delivery, failure, and carrier status, configure an AWS event destination and a processing path for those events. Keep credentials, contact data, and unredacted logs out of screenshots and support requests.
 
-## 8. Support
+## 8. Enable MMS only after AWS approval
+
+Leave **Enable AWS MMS** off during installation and while a registration says pending, requires update, rejected, or unassociated. After approval, follow the [MMS activation checklist](MMS.md#activation-checklist). SMS can continue to operate while MMS remains disabled.
+
+## 9. Support
 
 For an error report, use the [support and error reporting instructions](../SUPPORT.md). Email is supported for people who do not use GitHub.
