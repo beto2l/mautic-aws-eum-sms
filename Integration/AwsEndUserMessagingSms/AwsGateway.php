@@ -8,6 +8,7 @@ use Aws\Exception\AwsException;
 use Aws\PinpointSMSVoiceV2\PinpointSMSVoiceV2Client;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
+use MauticPlugin\AwsEndUserMessagingSmsBundle\Security\AwsRequestException;
 
 final class AwsGateway implements AwsGatewayInterface
 {

@@ -6,11 +6,11 @@ namespace MauticPlugin\AwsEndUserMessagingSmsBundle\Tests\Unit;
 
 use Mautic\LeadBundle\Entity\Lead;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms\AwsGatewayInterface;
-use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms\AwsRequestException;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms\ConfigurationProviderInterface;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms\MediaPreparerInterface;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms\Transport;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Security\SendPolicyInterface;
+use MauticPlugin\AwsEndUserMessagingSmsBundle\Security\AwsRequestException;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessagingSms;
+namespace MauticPlugin\AwsEndUserMessagingSmsBundle\Security;
 
 final class AwsRequestException extends \RuntimeException
 {

@@ -7,6 +7,7 @@ namespace MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessag
 use Mautic\LeadBundle\Entity\Lead;
 use Mautic\SmsBundle\Sms\MMSTransportInterface;
 use Mautic\SmsBundle\Sms\TransportInterface;
+use MauticPlugin\AwsEndUserMessagingSmsBundle\Security\AwsRequestException;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Security\SendBlockedException;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Security\SendPolicyInterface;
 use Psr\Log\LoggerInterface;

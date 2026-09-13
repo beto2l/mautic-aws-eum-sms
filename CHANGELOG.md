@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [1.1.1] - 2026-09-13
+
+- Prevented Mautic's integration service discovery from treating the internal AWS request exception as an autowired integration service.
+- Verified production container compilation and cache warmup on Mautic 7.2.0.
+
 ## [1.1.0] - 2026-09-13
 
 - Added outbound MMS support through Mautic 7.2's native `MMSTransportInterface` and AWS `SendMediaMessage`.
