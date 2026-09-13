@@ -1,0 +1,26 @@
+{
+  "schema_version": "motus-purchase/v1",
+  "event_id": "evt_example_consulting_completed",
+  "idempotency_key": "stripe:evt_example_consulting_completed:purchase.completed",
+  "event_type": "purchase.completed",
+  "occurred_at": "2026-09-13T18:00:00Z",
+  "contact": {
+    "email": "buyer@example.test",
+    "first_name": "Ana",
+    "last_name": "Ejemplo",
+    "phone": "+12125550123",
+    "language": "es"
+  },
+  "purchase_group_id": "stripe_checkout_session_example",
+  "purchase_id": "stripe_line_item_consulting_example",
+  "item_id": "motus_consulting_150",
+  "item_type": "consulting",
+  "purchase_status": "paid",
+  "amount_cents": 15000,
+  "currency": "usd",
+  "source": {
+    "provider": "stripe",
+    "order_id": "stripe_checkout_session_example",
+    "line_item_id": "stripe_line_item_consulting_example"
+  }
+}

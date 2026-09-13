@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/beto2l/mautic-aws-eum-sms/schemas/motus-purchase-event.schema.json",
+  "title": "Motus purchase projection event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "event_id",
+    "idempotency_key",
+    "event_type",
+    "occurred_at",
+    "contact",
+    "purchase_group_id",
+    "purchase_id",
+    "item_id",
+    "item_type",
+    "purchase_status"
+  ],
+  "properties": {
+    "schema_version": {"const": "motus-purchase/v1"},
+    "event_id": {"type": "string", "minLength": 1, "maxLength": 255},
+    "idempotency_key": {"type": "string", "minLength": 1, "maxLength": 255},
+    "event_type": {
+      "enum": ["purchase.completed", "purchase.refunded", "purchase.reversed"]
+    },
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["email"],
+      "properties": {
+        "email": {"type": "string", "format": "email"},
+        "first_name": {"type": "string", "maxLength": 255},
+        "last_name": {"type": "string", "maxLength": 255},
+        "phone": {"type": "string", "maxLength": 32},
+        "language": {"enum": ["es", "en"]}
+      }
+    },
+    "purchase_group_id": {"type": "string", "minLength": 1, "maxLength": 255},
+    "purchase_id": {"type": "string", "minLength": 1, "maxLength": 255},
+    "item_id": {
+      "enum": ["motus_recorded", "motus_consulting_150"]
+    },
+    "item_type": {"enum": ["course", "consulting"]},
+    "purchase_status": {"enum": ["paid", "refunded", "reversed"]},
+    "amount_cents": {"type": "integer", "minimum": 0},
+    "currency": {"const": "usd"},
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "order_id", "line_item_id"],
+      "properties": {
+        "provider": {"const": "stripe"},
+        "order_id": {"type": "string", "minLength": 1, "maxLength": 255},
+        "line_item_id": {"type": "string", "minLength": 1, "maxLength": 255}
+      }
+    }
+  }
+}
