@@ -6,7 +6,6 @@ namespace MauticPlugin\AwsEndUserMessagingSmsBundle\Integration\AwsEndUserMessag
 
 use Aws\Exception\AwsException;
 use Aws\PinpointSMSVoiceV2\PinpointSMSVoiceV2Client;
-use Aws\S3\Exception\S3Exception;
 use Aws\S3\S3Client;
 use MauticPlugin\AwsEndUserMessagingSmsBundle\Security\AwsRequestException;
 
@@ -32,21 +31,6 @@ final class AwsGateway implements AwsGatewayInterface
         try {
             return (string) $this->messagingClient($region)->sendMediaMessage($payload)->get('MessageId');
         } catch (AwsException $exception) {
-            throw $this->wrap($exception);
-        }
-    }
-
-    public function mediaExists(string $region, string $bucket, string $key): bool
-    {
-        try {
-            $this->s3Client($region)->headObject(['Bucket' => $bucket, 'Key' => $key]);
-
-            return true;
-        } catch (S3Exception $exception) {
-            if (404 === $exception->getStatusCode() || 'NotFound' === $exception->getAwsErrorCode()) {
-                return false;
-            }
-
             throw $this->wrap($exception);
         }
     }

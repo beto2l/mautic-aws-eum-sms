@@ -2,6 +2,11 @@
 
 All notable changes to this project are documented here.
 
+## [1.1.2] - 2026-09-13
+
+- Removed the S3 existence probe so the Mautic role does not need `s3:ListBucket`; deterministic media objects are safely overwritten and cached within each worker process.
+- Kept the required MMS media scope to `s3:GetObject` and `s3:PutObject` for one configured prefix.
+
 ## [1.1.1] - 2026-09-13
 
 - Prevented Mautic's integration service discovery from treating the internal AWS request exception as an autowired integration service.

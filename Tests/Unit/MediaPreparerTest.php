@@ -52,7 +52,6 @@ final class MediaPreparerTest extends TestCase
         file_put_contents($this->root.'/media/images/promo.png', $png);
 
         $gateway = $this->createMock(AwsGatewayInterface::class);
-        $gateway->expects(self::once())->method('mediaExists')->willReturn(false);
         $gateway->expects(self::once())->method('uploadMedia')->with(
             'us-west-2',
             'example-bucket',

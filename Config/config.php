@@ -13,7 +13,7 @@ use MauticPlugin\AwsEndUserMessagingSmsBundle\Security\SendPolicy;
 return [
     'name'        => 'AWS End User Messaging SMS/MMS',
     'description' => 'Secure, consent-aware SMS and MMS delivery through AWS End User Messaging.',
-    'version'     => '1.1.1',
+    'version'     => '1.1.2',
     'author'      => 'OPIN X LLC',
 
     'services' => [

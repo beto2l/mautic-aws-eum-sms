@@ -12,8 +12,6 @@ interface AwsGatewayInterface
     /** @param array<string, mixed> $payload */
     public function sendMedia(string $region, array $payload): string;
 
-    public function mediaExists(string $region, string $bucket, string $key): bool;
-
     public function uploadMedia(
         string $region,
         string $bucket,

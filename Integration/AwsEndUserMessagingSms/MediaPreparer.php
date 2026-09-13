@@ -61,9 +61,7 @@ final class MediaPreparer implements MediaPreparerInterface
         }
 
         $key = ('' !== $prefix ? $prefix.'/' : '').$hash.'.'.$extensions[$mime];
-        if (!$this->gateway->mediaExists($region, $bucket, $key)) {
-            $this->gateway->uploadMedia($region, $bucket, $key, $path, $mime);
-        }
+        $this->gateway->uploadMedia($region, $bucket, $key, $path, $mime);
 
         return $this->prepared[$cacheKey] = sprintf('s3://%s/%s', $bucket, $key);
     }
